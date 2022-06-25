@@ -2,7 +2,7 @@ import React from "react";
 // import WalletConnectProvider from "@walletconnect/web3-provider";
 // import Web3Modal from "web3modal";
 // import Web3 from "web3";
-import { useRecoilState } from "recoil";
+// import { useRecoilState } from "recoil";
 
 const App = () => {
   // const [account, setAccount] = useRecoilState(accountState);
