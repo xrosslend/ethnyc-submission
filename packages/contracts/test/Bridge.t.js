@@ -81,12 +81,13 @@ describe("Bridge Unit Test", function () {
       tokenId,
       sourceChainId: 31337,
       targetChainId: 4,
+      salt: 0,
       tokenURI: "",
     };
     await expect(bridge.deposit(relay)).to.emit(bridge, "Deposit");
   });
 
-  it("propose", async function () {
+  it("lock", async function () {
     const tokenId = 0;
     const relay = {
       nftContractAddress: mockNFT.address,
@@ -95,9 +96,37 @@ describe("Bridge Unit Test", function () {
       tokenId,
       sourceChainId: 4,
       targetChainId: 31337,
+      salt: 0,
       tokenURI: "",
     };
-    await expect(bridge.propose(relay)).to.emit(bridge, "Propose");
+    await expect(bridge.lock(relay)).to.emit(bridge, "Lock");
+  });
+
+  it("confirm", async function () {
+    const tokenId = 0;
+    const relay = {
+      nftContractAddress: mockNFT.address,
+      from: deployer.address,
+      to: deployer.address,
+      tokenId,
+      sourceChainId: 4,
+      targetChainId: 31337,
+      salt: 0,
+      tokenURI: "",
+    };
+    await bridge.lock(relay);
+    const requestLockTimestamp = await bridge.getCurrentTime();
+    const message = await bridge.encodeRelay(relay);
+    await optimisticOracle.proposePriceFor(
+      proposer.address,
+      bridge.address,
+      identifier,
+      requestLockTimestamp,
+      message,
+      0
+    );
+    await timer.setCurrentTime(Number(await timer.getCurrentTime()) + proposalLiveness + 1);
+    await expect(bridge.confirm(relay)).to.emit(bridge, "Confirm");
   });
 
   it("withdraw", async function () {
@@ -109,12 +138,31 @@ describe("Bridge Unit Test", function () {
       tokenId,
       sourceChainId: 4,
       targetChainId: 31337,
+      salt: 0,
       tokenURI: "",
     };
-    await bridge.propose(relay);
-    const requestTimestamp = await bridge.getCurrentTime();
+    await bridge.lock(relay);
+    const requestLockTimestamp = await bridge.getCurrentTime();
     const message = await bridge.encodeRelay(relay);
-    await optimisticOracle.proposePriceFor(proposer.address, bridge.address, identifier, requestTimestamp, message, 0);
+    await optimisticOracle.proposePriceFor(
+      proposer.address,
+      bridge.address,
+      identifier,
+      requestLockTimestamp,
+      message,
+      0
+    );
+    await timer.setCurrentTime(Number(await timer.getCurrentTime()) + proposalLiveness + 1);
+    await bridge.confirm(relay);
+    const requestConfirmTimestamp = await bridge.getCurrentTime();
+    await optimisticOracle.proposePriceFor(
+      proposer.address,
+      bridge.address,
+      identifier,
+      requestConfirmTimestamp,
+      message,
+      0
+    );
     await timer.setCurrentTime(Number(await timer.getCurrentTime()) + proposalLiveness + 1);
     await expect(bridge.withdraw(relay)).to.emit(bridge, "Withdraw");
   });

@@ -22,7 +22,8 @@ import "hardhat/console.sol";
 
 contract Bridge is Testable {
   event Deposit(bytes32 indexed hash, bytes message);
-  event Propose(bytes32 indexed hash, bytes message);
+  event Lock(bytes32 indexed hash, bytes message);
+  event Confirm(bytes32 indexed hash, bytes message);
   event Withdraw(bytes32 indexed hash, bytes message);
 
   struct Relay {
@@ -32,11 +33,11 @@ contract Bridge is Testable {
     uint256 tokenId;
     uint256 sourceChainId;
     uint256 targetChainId;
+    uint256 salt;
     string tokenURI;
   }
 
-  mapping(bytes32 => address) private _originalNFTContractAddresses;
-  mapping(bytes32 => uint256) private _originalTokenIds;
+  mapping(bytes32 => bool) private _confirmed;
 
   FinderInterface private _finder;
   IERC20 private _collateralCurrency;
@@ -67,19 +68,33 @@ contract Bridge is Testable {
   }
 
   // This is called in target chain
-  function propose(Relay memory relay) public {
+  function lock(Relay memory relay) public {
     require(relay.targetChainId == block.chainid, "Bridge: chain id invalid");
     bytes memory message = encodeRelay(relay);
     bytes32 hash = keccak256(message);
+    require(!_confirmed[hash], "Bridge: relay confirmed");
     _requested = getCurrentTime();
     _requestOraclePrice(_requested, message);
-    emit Propose(hash, message);
+    emit Lock(hash, message);
+  }
+
+  // This is called in target chain
+  function confirm(Relay memory relay) public {
+    bytes memory message = encodeRelay(relay);
+    bytes32 hash = keccak256(message);
+    require(!_confirmed[hash], "Bridge: relay confirmed");
+    _confirmed[hash] = true;
+    _getOraclePrice(_requested, message);
+    _requested = getCurrentTime();
+    _requestOraclePrice(_requested, message);
+    emit Confirm(hash, message);
   }
 
   // This is called in target chain
   function withdraw(Relay memory relay) public {
     bytes memory message = encodeRelay(relay);
     bytes32 hash = keccak256(message);
+    require(_confirmed[hash], "Bridge: relay is not confirmed");
     _getOraclePrice(_requested, message);
     _wrappedERC721.mint(relay.to, uint256(hash), relay.tokenURI);
     emit Withdraw(hash, message);
