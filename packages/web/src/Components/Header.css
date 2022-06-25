@@ -1,0 +1,30 @@
+.header {
+    height: 94px;
+    width: 1512px;
+    background-color: #ffffff;
+  }
+
+  .logo {
+    height: 46px;
+    width: 224px;
+  }
+
+  .about {
+    height: 46px;
+    width: 224px;
+  }
+
+  .rent {
+    height: 46px;
+    width: 224px;
+  }
+
+  .lend {
+    height: 46px;
+    width: 224px;
+  }
+
+  .walletconnect {
+    height: 38px;
+    width: 224px;
+  }
