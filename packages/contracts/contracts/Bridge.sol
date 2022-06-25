@@ -4,20 +4,26 @@ pragma solidity ^0.8.0;
 import "@uma/core/contracts/oracle/interfaces/FinderInterface.sol";
 import "@uma/core/contracts/oracle/interfaces/OptimisticOracleV2Interface.sol";
 
+import "@uma/core/contracts/common/implementation/AddressWhitelist.sol";
+import "@uma/core/contracts/common/implementation/ExpandedERC20.sol";
 import "@uma/core/contracts/common/implementation/Timer.sol";
 import "@uma/core/contracts/common/implementation/Testable.sol";
+import "@uma/core/contracts/oracle/implementation/IdentifierWhitelist.sol";
+import "@uma/core/contracts/oracle/implementation/Store.sol";
 import "@uma/core/contracts/oracle/implementation/Finder.sol";
+import "@uma/core/contracts/oracle/implementation/OptimisticOracleV2.sol";
+import "@uma/core/contracts/oracle/test/MockOracleAncillary.sol";
 
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
-import "@openzeppelin/contracts/interfaces/IERC721Metadata.sol";
 
 import "./WrappedERC721.sol";
 
+import "hardhat/console.sol";
+
 contract Bridge is Testable {
-  event Deposit(bytes32 indexed hash);
-  event Propose(bytes32 indexed hash);
-  event Dispute(bytes32 indexed hash);
-  event Withdraw(bytes32 indexed hash);
+  event Deposit(bytes32 indexed hash, bytes message);
+  event Propose(bytes32 indexed hash, bytes message);
+  event Withdraw(bytes32 indexed hash, bytes message);
 
   struct Relay {
     address nftContractAddress;
@@ -26,89 +32,82 @@ contract Bridge is Testable {
     uint256 tokenId;
     uint256 sourceChainId;
     uint256 targetChainId;
-    uint256 finalizedAt;
     string tokenURI;
-    bool isTokenURIIncluded;
-    bool isWrappedERC721;
   }
 
-  mapping(bytes32 => Relay) private _relays;
-  mapping(bytes32 => bool) private _exists;
-  mapping(bytes32 => bool) private _filled;
-  mapping(bytes32 => bool) private _disputed;
+  mapping(bytes32 => address) private _originalNFTContractAddresses;
+  mapping(bytes32 => uint256) private _originalTokenIds;
 
   FinderInterface private _finder;
+  IERC20 private _collateralCurrency;
   WrappedERC721 private _wrappedERC721;
 
-  constructor(address finderAddress, address timerAddress) Testable(timerAddress) {
+  bytes32 private _priceIdentifier = "YES_OR_NO_QUERY";
+  uint256 private _requested;
+
+  constructor(
+    address collateralAddress,
+    address finderAddress,
+    address timerAddress
+  ) Testable(timerAddress) {
     _finder = FinderInterface(finderAddress);
+    _collateralCurrency = IERC20(collateralAddress);
     _wrappedERC721 = new WrappedERC721();
     _wrappedERC721.initialize();
   }
 
   // This is called in source chain
   function deposit(Relay memory relay) public {
-    relay.tokenURI = relay.isTokenURIIncluded ? IERC721Metadata(relay.nftContractAddress).tokenURI(relay.tokenId) : "";
-
-    if (relay.nftContractAddress == address(_wrappedERC721)) {
-      _wrappedERC721.burn(relay.tokenId);
-      relay.isWrappedERC721 = true;
-    } else {
-      IERC721(relay.nftContractAddress).transferFrom(relay.from, address(this), relay.tokenId);
-      relay.isWrappedERC721 = false;
-    }
-
-    bytes32 hash = _hashRelay(relay);
-    emit Deposit(hash);
+    require(relay.sourceChainId == block.chainid, "Bridge: chain id invalid");
+    require(relay.from == IERC721(relay.nftContractAddress).ownerOf(relay.tokenId), "Bridge: from invalid");
+    bytes memory message = encodeRelay(relay);
+    bytes32 hash = keccak256(message);
+    IERC721(relay.nftContractAddress).transferFrom(relay.from, address(this), relay.tokenId);
+    emit Deposit(hash, message);
   }
 
   // This is called in target chain
   function propose(Relay memory relay) public {
-    bytes32 hash = _hashRelay(relay);
-    require(!_exists[hash], "Bridge: relay does not exist");
-    _exists[hash] = true;
-    _relays[hash] = relay;
-    emit Propose(hash);
-  }
-
-  //TODO: implement this
-  // This is called in target chain
-  function dispute(Relay memory relay) public {
-    bytes32 hash = _hashRelay(relay);
-    require(_exists[hash], "Bridge: relay does not exist");
-    require(!_filled[hash], "Bridge: relay already filled");
-    _disputed[hash] = true;
-    emit Dispute(hash);
+    require(relay.targetChainId == block.chainid, "Bridge: chain id invalid");
+    bytes memory message = encodeRelay(relay);
+    bytes32 hash = keccak256(message);
+    _requested = getCurrentTime();
+    _requestOraclePrice(_requested, message);
+    emit Propose(hash, message);
   }
 
   // This is called in target chain
   function withdraw(Relay memory relay) public {
-    bytes32 hash = _hashRelay(relay);
-
-    require(_exists[hash], "Bridge: relay does not exist");
-    require(!_filled[hash], "Bridge: relay already filled");
-    require(!_disputed[hash], "Bridge: relay is disputed");
-
-    require(block.timestamp >= relay.finalizedAt, "Bridge: relay is not yet finalized");
-
-    if (relay.isWrappedERC721) {
-      IERC721(relay.nftContractAddress).transferFrom(address(this), relay.to, relay.tokenId);
-    } else {
-      _wrappedERC721.mint(relay.to, relay.tokenId, relay.tokenURI);
-    }
-
-    emit Withdraw(hash);
+    bytes memory message = encodeRelay(relay);
+    bytes32 hash = keccak256(message);
+    _getOraclePrice(_requested, message);
+    _wrappedERC721.mint(relay.to, uint256(hash), relay.tokenURI);
+    emit Withdraw(hash, message);
   }
 
-  function _requestOracle() internal {
-    OptimisticOracleV2Interface optimisticOracle = _getOptimisticOracle();
+  function encodeRelay(Relay memory relay) public pure returns (bytes memory) {
+    return abi.encode(relay);
+  }
+
+  function _requestOraclePrice(uint256 requestedTime, bytes memory message) internal {
+    OptimisticOracleV2Interface oracle = _getOptimisticOracle();
+    oracle.requestPrice(_priceIdentifier, requestedTime, message, _collateralCurrency, 0);
+  }
+
+  function _getOraclePrice(uint256 withdrawalRequestTimestamp, bytes memory message) internal returns (uint256) {
+    OptimisticOracleV2Interface oracle = _getOptimisticOracle();
+    require(
+      oracle.hasPrice(address(this), _priceIdentifier, withdrawalRequestTimestamp, message),
+      "Unresolved oracle price"
+    );
+    int256 oraclePrice = oracle.settleAndGetPrice(_priceIdentifier, withdrawalRequestTimestamp, message);
+    if (oraclePrice < 0) {
+      oraclePrice = 0;
+    }
+    return uint256(oraclePrice);
   }
 
   function _getOptimisticOracle() internal view returns (OptimisticOracleV2Interface) {
     return OptimisticOracleV2Interface(_finder.getImplementationAddress("OptimisticOracleV2"));
-  }
-
-  function _hashRelay(Relay memory relay) internal pure returns (bytes32) {
-    return keccak256(abi.encode(relay));
   }
 }
