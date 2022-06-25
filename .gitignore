@@ -105,3 +105,6 @@ dist
 
 # misc
 .DS_Store
+
+# web
+packages/web/build
