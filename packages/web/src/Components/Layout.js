@@ -8,9 +8,7 @@ export const Layout = ({ children, isLanding }) => {
     <Flex minHeight={"100vh"} direction={"column"}>
       <Header isLanding={isLanding} />
       <Box flex={1}>
-        <Container maxW={"7xl"}>
-          <Stack>{children}</Stack>
-        </Container>
+        <Container maxW={"7xl"}>{children}</Container>
       </Box>
       <Footer />
     </Flex>
