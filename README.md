@@ -1,7 +1,7 @@
 # XrossLend ETH NYC Submission
 
 
-We have deployed to Radicle. 
+🍃 We have deployed to Radicle ! 
 
 🍃 The project is available at:
 
