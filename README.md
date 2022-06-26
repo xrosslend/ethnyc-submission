@@ -3,7 +3,7 @@
 
 🍃 We have deployed to Radicle ! 
 
-🍃 The project is available at:
+The project is available at:
 
 https://app.radicle.network/seeds/willow.radicle.garden/rad:git:hnrkrdo4aiufu5kiski6bjhb387dtgzshzyso
 
