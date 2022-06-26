@@ -22,5 +22,29 @@
       "source": "0xf00C5ff56105e78D32606624bdb9A1fCe047406A"
     },
     "rpc": "https://optimism-mainnet.gateway.pokt.network/v1/lb/62b82985123e6f003985dbf4"
+  },
+  "boba": {
+    "name": "Boba",
+    "chainId": 288,
+    "contracts": {
+      "weth": "",
+      "finder": "",
+      "optimisticOracle": "",
+      "target": "0xF02eb01aFF74e76991f79f3f13aBF0486d1Da803",
+      "source": "0xf00C5ff56105e78D32606624bdb9A1fCe047406A"
+    },
+    "rpc": "https://optimism-mainnet.gateway.pokt.network/v1/lb/62b80eab123e6f0039859b12"
+  },
+  "polygon": {
+    "name": "Polygon",
+    "chainId": 137,
+    "contracts": {
+      "weth": "",
+      "finder": "",
+      "optimisticOracle": "",
+      "target": "0xF02eb01aFF74e76991f79f3f13aBF0486d1Da803",
+      "source": "0xf00C5ff56105e78D32606624bdb9A1fCe047406A"
+    },
+    "rpc": "https://optimism-mainnet.gateway.pokt.network/v1/lb/62b80eab123e6f0039859b12"
   }
 }
