@@ -1,5 +1,14 @@
 # XrossLend ETH NYC Submission
 
+
+## Project Description
+
+
+Have you made it to APEFEST ? Most likely no ... The reason ?  You don't own a Bored Ape NFT that provides access to parties and events. But don't worry we got you! Our platform will you to enjoy perks/benefits of NFTs and attend exclusive events by renting NFTs. While owners can earn passive income by lending tokens.
+
+
+## Deployments
+
 🍃 We have deployed to Radicle !
 
 The project is available at:
