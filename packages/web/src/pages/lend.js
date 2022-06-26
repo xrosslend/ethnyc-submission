@@ -1,7 +1,7 @@
 import { Text } from "@chakra-ui/react";
 
-import { Lend } from "../components/Lend.js";
-import { Layout } from "../components/Layout.js";
+import { Lend } from "../components/Lend";
+import { Layout } from "../components/Layout";
 
 export const LendPage = () => {
   const card = {

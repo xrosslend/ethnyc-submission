@@ -1,13 +1,13 @@
 import React from "react";
 import { Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { Layout } from "../components/Layout.js";
-import { Cards } from "../components/Cards.js";
+import { Layout } from "../components/Layout";
+import { Cards } from "../components/Cards";
 
-import { accountState } from "../atoms/account.js";
+import { accountState } from "../atoms/account";
 
 export const MyPage = () => {
-  const [account, setAccount] = useRecoilState(accountState);
+  const [account] = useRecoilState(accountState);
 
   const cards = [
     { collection: "collection", name: "name", image: "https://asia.olympus-imaging.com/content/000107506.jpg" },

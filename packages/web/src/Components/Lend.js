@@ -10,7 +10,7 @@ import {
   UnorderedList,
   ListItem,
 } from "@chakra-ui/react";
-import { Card } from "./Card.js";
+import { Card } from "./Card";
 
 export const Lend = ({ card }) => {
   return (

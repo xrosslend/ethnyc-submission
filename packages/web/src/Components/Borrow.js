@@ -1,5 +1,5 @@
 import { Grid, Box, Button, FormControl, FormLabel, Input, VStack, Checkbox, Stack } from "@chakra-ui/react";
-import { Card } from "./Card.js";
+import { Card } from "./Card";
 
 export const Borrow = ({ card }) => {
   return (

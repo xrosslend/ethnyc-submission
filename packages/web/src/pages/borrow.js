@@ -1,7 +1,7 @@
 import { Text } from "@chakra-ui/react";
 
-import { Borrow } from "../components/Borrow.js";
-import { Layout } from "../components/Layout.js";
+import { Borrow } from "../components/Borrow";
+import { Layout } from "../components/Layout";
 
 export const BorrowPage = () => {
   const card = {
