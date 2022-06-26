@@ -6,7 +6,7 @@ import { Layout } from "../components/Layout";
 import { myCards } from "../lib/fixtures";
 
 export const LendPage = () => {
-  const card = myCards[0];
+  const card = myCards[1];
 
   return (
     <Layout>

@@ -8,14 +8,13 @@ import Web3 from "web3";
 import { useRecoilState } from "recoil";
 
 import SourceABI from "../../../contracts/artifacts/contracts/Source.sol/Source.json";
-import networks from "../../../contracts/networks.json";
+import ERC721ABI from "../../../contracts/artifacts/@openzeppelin/contracts/token/ERC721/ERC721.sol/ERC721.json";
 import { accountState } from "../atoms/account";
+import networks from "../../../contracts/networks.json";
 
 export const Lend = ({ card }) => {
   const [account, setAccount] = useRecoilState(accountState);
   const [network, setNetwork] = React.useState("rinkeby");
-
-  const zeroAddress = "0x0000000000000000000000000000000000000000";
 
   const connect = async () => {
     try {
@@ -57,17 +56,20 @@ export const Lend = ({ card }) => {
       const provider = await web3Modal.connect();
       const web3 = new Web3(provider);
       const [account] = await web3.eth.getAccounts();
+
       const sourceAddress = networks[network].contracts.source;
       const source = new web3.eth.Contract(SourceABI.abi, sourceAddress);
       const relay = {
         currencyContractAddress: networks[network].contracts.weth,
-        nftContractAddress: zeroAddress,
-        from: zeroAddress,
-        tokenId: 0,
+        nftContractAddress: card.nftContractAddress,
+        from: account,
+        tokenId: card.tokenId,
         price: 0,
         expiration: 9999999999,
         tokenURI: "",
       };
+      // const erc721 = new web3.eth.Contract(ERC721ABI.abi, card.nftContractAddress);
+      // await erc721.methods.setApprovalForAll(sourceAddress, true).send({ from: account });
       await source.methods.rent(relay).send({ from: account });
     } catch (err) {
       console.error(err);
