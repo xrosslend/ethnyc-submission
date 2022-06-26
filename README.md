@@ -7,6 +7,9 @@
 Have you made it to APEFEST ? Most likely no ... The reason ?  You don't own a Bored Ape NFT that provides access to parties and events. But don't worry we got you! Our platform will you to enjoy perks/benefits of NFTs and attend exclusive events by renting NFTs. While owners can earn passive income by lending tokens.
 
 
+We made a cross-chain bridging lending NFTs using Optimistic Oracle UMA. We used Tenderly that let us find a bug in UMA oracle optimistic implementation with Rinkeby testnet and we fixed it. We also used Valist technology to make our project an NFT licensee. Pocket Network let us implement many RPCs on different networks and deploy on many networks. We provide bridging to : Optimism, Boba, Polygon, Gnosis Chain, Cronos and SKALE. We did a cross-bridging lending NFTs in 48 hours deploying on many networks, that's something very challenging.
+
+
 ## Deployments
 
 🍃 We have deployed to Radicle !
