@@ -2,11 +2,12 @@ const { interfaceName, TokenRolesEnum } = require("@uma/common");
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("Bridge Unit Test", function () {
+describe("Target Unit Test", function () {
   let timer;
   let optimisticOracle;
+  let expandedERC20;
   let mockNFT;
-  let bridge;
+  let target;
   let deployer, proposer;
 
   const utf8ToHex = (input) => ethers.utils.formatBytes32String(input);
@@ -33,9 +34,9 @@ describe("Bridge Unit Test", function () {
     const identifierWhitelist = await IdentifierWhitelist.deploy();
     await identifierWhitelist.deployed();
 
-    const USDC = await ethers.getContractFactory("ExpandedERC20");
-    const usdc = await USDC.deploy("USD Coin", "USDC", 6);
-    await usdc.deployed();
+    const ExpandedERC20 = await ethers.getContractFactory("ExpandedERC20");
+    expandedERC20 = await ExpandedERC20.deploy("USD Coin", "USDC", 6);
+    await expandedERC20.deployed();
 
     const Store = await ethers.getContractFactory("Store");
 
@@ -58,112 +59,95 @@ describe("Bridge Unit Test", function () {
 
     await identifierWhitelist.addSupportedIdentifier(identifier);
 
-    await usdc.addMember(TokenRolesEnum.MINTER, deployer.address);
-    await collateralWhitelist.addToWhitelist(usdc.address);
+    await expandedERC20.addMember(TokenRolesEnum.MINTER, deployer.address);
+    await collateralWhitelist.addToWhitelist(expandedERC20.address);
 
     const MockNFT = await ethers.getContractFactory("MockNFT");
     mockNFT = await MockNFT.deploy();
     await mockNFT.deployed();
 
-    const Bridge = await ethers.getContractFactory("Bridge");
-    bridge = await Bridge.deploy(usdc.address, finder.address, timer.address);
-    await bridge.deployed();
-  });
-
-  it("deposit", async function () {
-    const tokenId = 0;
-    await mockNFT.mint(deployer.address);
-    await mockNFT.setApprovalForAll(bridge.address, true);
-    const relay = {
-      nftContractAddress: mockNFT.address,
-      from: deployer.address,
-      to: deployer.address,
-      tokenId,
-      sourceChainId: 31337,
-      targetChainId: 4,
-      salt: 0,
-      tokenURI: "",
-    };
-    await expect(bridge.deposit(relay)).to.emit(bridge, "Deposit");
+    const Target = await ethers.getContractFactory("Target");
+    target = await Target.deploy(expandedERC20.address, finder.address, timer.address);
+    await target.deployed();
   });
 
   it("lock", async function () {
     const tokenId = 0;
     const relay = {
+      currencyContractAddress: expandedERC20.address,
       nftContractAddress: mockNFT.address,
       from: deployer.address,
       to: deployer.address,
       tokenId,
-      sourceChainId: 4,
-      targetChainId: 31337,
-      salt: 0,
+      price: 0,
+      expiration: 9999999999,
       tokenURI: "",
     };
-    await expect(bridge.lock(relay)).to.emit(bridge, "Lock");
+    await expect(target.lock(relay)).to.emit(target, "Lock");
   });
 
   it("confirm", async function () {
     const tokenId = 0;
     const relay = {
+      currencyContractAddress: expandedERC20.address,
       nftContractAddress: mockNFT.address,
       from: deployer.address,
       to: deployer.address,
       tokenId,
-      sourceChainId: 4,
-      targetChainId: 31337,
-      salt: 0,
+      price: 0,
+      expiration: 9999999999,
       tokenURI: "",
     };
-    await bridge.lock(relay);
-    const requestLockTimestamp = await bridge.getCurrentTime();
-    const message = await bridge.encodeRelay(relay);
+    await target.lock(relay);
+    const requestLockTimestamp = await target.getCurrentTime();
+    const message = await target.encodeRelay(relay);
     await optimisticOracle.proposePriceFor(
       proposer.address,
-      bridge.address,
+      target.address,
       identifier,
       requestLockTimestamp,
       message,
       0
     );
     await timer.setCurrentTime(Number(await timer.getCurrentTime()) + proposalLiveness + 1);
-    await expect(bridge.confirm(relay)).to.emit(bridge, "Confirm");
+    await expect(target.confirm(relay)).to.emit(target, "Confirm");
   });
 
-  it("withdraw", async function () {
+  it("borrow", async function () {
     const tokenId = 0;
     const relay = {
+      currencyContractAddress: expandedERC20.address,
       nftContractAddress: mockNFT.address,
       from: deployer.address,
       to: deployer.address,
       tokenId,
-      sourceChainId: 4,
-      targetChainId: 31337,
-      salt: 0,
+      price: 0,
+      expiration: 9999999999,
       tokenURI: "",
     };
-    await bridge.lock(relay);
-    const requestLockTimestamp = await bridge.getCurrentTime();
-    const message = await bridge.encodeRelay(relay);
+    await target.lock(relay);
+    const requestLockTimestamp = await target.getCurrentTime();
+    const message = await target.encodeRelay(relay);
     await optimisticOracle.proposePriceFor(
       proposer.address,
-      bridge.address,
+      target.address,
       identifier,
       requestLockTimestamp,
       message,
       0
     );
     await timer.setCurrentTime(Number(await timer.getCurrentTime()) + proposalLiveness + 1);
-    await bridge.confirm(relay);
-    const requestConfirmTimestamp = await bridge.getCurrentTime();
+    await target.confirm(relay);
+    const requestConfirmTimestamp = await target.getCurrentTime();
     await optimisticOracle.proposePriceFor(
       proposer.address,
-      bridge.address,
+      target.address,
       identifier,
       requestConfirmTimestamp,
       message,
       0
     );
     await timer.setCurrentTime(Number(await timer.getCurrentTime()) + proposalLiveness + 1);
-    await expect(bridge.withdraw(relay)).to.emit(bridge, "Withdraw");
+    await expect(target.borrow(relay, 1)).to.emit(target, "Borrow");
   });
 });
