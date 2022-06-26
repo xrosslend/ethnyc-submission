@@ -4,7 +4,7 @@ import Web3Modal from "web3modal";
 import Web3 from "web3";
 import { useRecoilState } from "recoil";
 
-import { accountState } from "./atoms/account";
+import { accountState } from "../../atoms/account";
 
 const WalletConnect = () => {
   const [account, setAccount] = useRecoilState(accountState);
