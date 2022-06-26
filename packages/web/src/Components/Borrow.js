@@ -1,5 +1,4 @@
 import React from "react";
-
 import {
   Grid,
   Box,
@@ -24,7 +23,6 @@ import { Card } from "./Card";
 
 import TargetABI from "../../../contracts/artifacts/contracts/Target.sol/Target.json";
 import OptimisticOracleV2 from "../../../contracts/artifacts/@uma/core/contracts/oracle/implementation/OptimisticOracleV2.sol/OptimisticOracleV2.json";
-
 import networks from "../../../contracts/networks.json";
 
 const utf8ToHex = (input) => ethers.utils.formatBytes32String(input);
@@ -76,7 +74,6 @@ export const Borrow = ({ card }) => {
       const provider = await web3Modal.connect();
       const web3 = new Web3(provider);
       const [account] = await web3.eth.getAccounts();
-
       const targetAddress = networks[network].contracts.target;
       const optimisticOracleAddress = networks[network].contracts.optimisticOracle;
       const target = new web3.eth.Contract(TargetABI.abi, targetAddress);
@@ -90,13 +87,10 @@ export const Borrow = ({ card }) => {
         tokenURI: "",
       };
       const hash = await target.methods.hashRelay(relay).call();
-      console.log(hash);
       const message = await target.methods.encodeRelay(relay).call();
-      console.log(message);
       await target.methods.lock(relay).send({ from: account });
       const requestLockTimestamp = await target.methods.requestedAt(hash).call();
       const optimisticOracle = new web3.eth.Contract(OptimisticOracleV2.abi, optimisticOracleAddress);
-      console.log(account, targetAddress, identifier, requestLockTimestamp, message, 0);
       await optimisticOracle.methods
         .proposePriceFor(account, targetAddress, identifier, requestLockTimestamp, message, 0)
         .send({ from: account });

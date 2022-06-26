@@ -1,9 +1,78 @@
+import React from "react";
 import { Grid, Box, Button, FormControl, FormLabel, Input, VStack, Checkbox, Stack, Select } from "@chakra-ui/react";
 import { Card } from "./Card";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import Web3Modal from "web3modal";
+import Web3 from "web3";
+
+import { useRecoilState } from "recoil";
+
+import SourceABI from "../../../contracts/artifacts/contracts/Source.sol/Source.json";
+import networks from "../../../contracts/networks.json";
+import { accountState } from "../atoms/account";
 
 export const Lend = ({ card }) => {
-  const lend = () => {
-    console.log("test");
+  const [account, setAccount] = useRecoilState(accountState);
+  const [network, setNetwork] = React.useState("rinkeby");
+
+  const zeroAddress = "0x0000000000000000000000000000000000000000";
+
+  const connect = async () => {
+    try {
+      const providerOptions = {
+        walletconnect: {
+          package: WalletConnectProvider,
+          options: {
+            infuraId: "95f65ab099894076814e8526f52c9149",
+          },
+        },
+      };
+      const web3Modal = new Web3Modal({
+        //network: "mainnet",
+        providerOptions,
+      });
+      const provider = await web3Modal.connect();
+      const web3 = new Web3(provider);
+      const [account] = await web3.eth.getAccounts();
+      setAccount(account);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const lend = async () => {
+    try {
+      const providerOptions = {
+        walletconnect: {
+          package: WalletConnectProvider,
+          options: {
+            infuraId: "95f65ab099894076814e8526f52c9149",
+          },
+        },
+      };
+      const web3Modal = new Web3Modal({
+        //network: "mainnet",
+        providerOptions,
+      });
+      const provider = await web3Modal.connect();
+      const web3 = new Web3(provider);
+      const [account] = await web3.eth.getAccounts();
+      const sourceAddress = networks[network].contracts.source;
+      const source = new web3.eth.Contract(SourceABI.abi, sourceAddress);
+      const relay = {
+        currencyContractAddress: networks[network].contracts.weth,
+        nftContractAddress: zeroAddress,
+        from: zeroAddress,
+        tokenId: 0,
+        price: 0,
+        expiration: 9999999999,
+        tokenURI: "",
+      };
+      await source.methods.rent(relay).send({ from: account });
+    } catch (err) {
+      console.error(err);
+    }
+
     const relay = {};
   };
 
@@ -14,17 +83,14 @@ export const Lend = ({ card }) => {
         <VStack spacing={3} mb="12">
           <FormControl>
             <FormLabel htmlFor="text">Price per Day</FormLabel>
-            <Input id="text" type="price" placeholder="weth" />
+            <Input id="text" type="price" placeholder="WETH" />
           </FormControl>
           <FormControl>
             <FormLabel htmlFor="currency">Currency</FormLabel>
             <Select id="currency">
-              <option value="option1">weth</option>
-              <option value="option2" disabled>
-                WETH
-              </option>
-              <option value="option2" disabled>
-                WMATIC
+              <option value="eth">WETH</option>
+              <option value="usdc" disabled>
+                USDC
               </option>
             </Select>
           </FormControl>
@@ -52,16 +118,29 @@ export const Lend = ({ card }) => {
             </Stack>
           </FormControl>
         </VStack>
-        <Button
-          backgroundColor="red.400"
-          _hover={{ bg: "red.500" }}
-          color="white"
-          width="100%"
-          rounded={"2xl"}
-          onClick={lend}
-        >
-          Confirm
-        </Button>
+        {!account ? (
+          <Button
+            backgroundColor="red.400"
+            _hover={{ bg: "red.500" }}
+            color="white"
+            width="100%"
+            rounded={"2xl"}
+            onClick={connect}
+          >
+            Connect Wallet
+          </Button>
+        ) : (
+          <Button
+            backgroundColor="red.400"
+            _hover={{ bg: "red.500" }}
+            color="white"
+            width="100%"
+            rounded={"2xl"}
+            onClick={lend}
+          >
+            Confirm
+          </Button>
+        )}
       </Box>
     </Grid>
   );

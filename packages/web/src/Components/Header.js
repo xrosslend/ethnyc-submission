@@ -87,9 +87,6 @@ export const Header = ({ isLanding }) => {
                       <Text>{`${shorten(account, 12)}...`}</Text>
                     </MenuButton>
                     <MenuList>
-                      <MenuItem as={NavLink} to="/" href="/my">
-                        Borrow
-                      </MenuItem>
                       <MenuItem as={NavLink} to="/my" href="/my">
                         Lend
                       </MenuItem>
