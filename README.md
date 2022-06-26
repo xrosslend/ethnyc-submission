@@ -1,6 +1,7 @@
 # XrossLend ETH NYC Submission
 
 
+
 🍃 We have deployed to Radicle ! 
 
 The project is available at:
@@ -16,7 +17,9 @@ https://willow.radicle.garden/hnrkrdo4aiufu5kiski6bjhb387dtgzshzyso.git
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
-🍃 We have published our Project to Valist ! 
+🍃 We have published our Project to Valist ! 🍃🍃 STORED ON IPFS 🍃🍃
+
+---- > https://app.valist.io/newway/xcrosslend/1
 
 Transaction : https://polygonscan.com/tx/0xa5102403c4237306e910c9e813a5e3ed3a41929ec5329fb4bdefcbbe95f3eddc
 
