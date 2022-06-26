@@ -6,6 +6,7 @@ import ChainList from './ChainList'
 const LendCard = () => {
   return (
     <div>
+        <h2>Lend 'n Earn</h2>
         <PriceInput/>
         <ChainList/>
         <ConfirmLending/>
