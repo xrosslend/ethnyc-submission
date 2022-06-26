@@ -16,7 +16,7 @@ https://willow.radicle.garden/hnrkrdo4aiufu5kiski6bjhb387dtgzshzyso.git
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
-🍃 We have published our Project to Valist ! 
+🍃 We have published our Project to Valist ! 🍃🍃 STORED ON IPFS 🍃🍃🍃 (Index of /ipfs/QmVx664AWMQgm47UWzurN3F9i5U9u7b3YhHBxShRhKidRa)
 
 ---- > https://app.valist.io/newway/xcrosslend/1
 
