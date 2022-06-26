@@ -1,12 +1,14 @@
-import React from 'react'
-import Header from './Components/Header.js'
+import React from "react";
+
+import { Routes, Route } from "react-router-dom";
+import { IndexPage } from "./pages/index";
 
 const App = () => {
   return (
-    <div>
-      <Header/>
-    </div>
-  )
-}
+    <Routes>
+      <Route path="/" element={<IndexPage />} />
+    </Routes>
+  );
+};
 
-export default App
+export default App;
