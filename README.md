@@ -16,6 +16,9 @@ https://willow.radicle.garden/hnrkrdo4aiufu5kiski6bjhb387dtgzshzyso.git
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
+🍃 We have published our Project to Valist ! 
+
+Transaction : https://polygonscan.com/tx/0xa5102403c4237306e910c9e813a5e3ed3a41929ec5329fb4bdefcbbe95f3eddc
 
 
 ## Development
