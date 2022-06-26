@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+import "hardhat/console.sol";
+
 import "@uma/core/contracts/oracle/interfaces/FinderInterface.sol";
 import "@uma/core/contracts/oracle/interfaces/OptimisticOracleV2Interface.sol";
 
@@ -14,28 +16,16 @@ import "@uma/core/contracts/oracle/implementation/Finder.sol";
 import "@uma/core/contracts/oracle/implementation/OptimisticOracleV2.sol";
 import "@uma/core/contracts/oracle/test/MockOracleAncillary.sol";
 
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
 
 import "./WrappedERC721.sol";
+import "./RelayLib.sol";
 
-import "hardhat/console.sol";
-
-contract Bridge is Testable {
-  event Deposit(bytes32 indexed hash, bytes message);
-  event Lock(bytes32 indexed hash, bytes message);
-  event Confirm(bytes32 indexed hash, bytes message);
-  event Withdraw(bytes32 indexed hash, bytes message);
-
-  struct Relay {
-    address nftContractAddress;
-    address from;
-    address to;
-    uint256 tokenId;
-    uint256 sourceChainId;
-    uint256 targetChainId;
-    uint256 salt;
-    string tokenURI;
-  }
+contract Target is Testable {
+  event Lock(bytes32 indexed hash, RelayLib.Relay reray);
+  event Confirm(bytes32 indexed hash, RelayLib.Relay reray);
+  event Borrow(bytes32 indexed hash, RelayLib.Relay reray);
 
   mapping(bytes32 => bool) private _confirmed;
 
@@ -57,50 +47,38 @@ contract Bridge is Testable {
     _wrappedERC721.initialize();
   }
 
-  // This is called in source chain
-  function deposit(Relay memory relay) public {
-    require(relay.sourceChainId == block.chainid, "Bridge: chain id invalid");
-    require(relay.from == IERC721(relay.nftContractAddress).ownerOf(relay.tokenId), "Bridge: from invalid");
-    bytes memory message = encodeRelay(relay);
-    bytes32 hash = keccak256(message);
-    IERC721(relay.nftContractAddress).transferFrom(relay.from, address(this), relay.tokenId);
-    emit Deposit(hash, message);
-  }
-
-  // This is called in target chain
-  function lock(Relay memory relay) public {
-    require(relay.targetChainId == block.chainid, "Bridge: chain id invalid");
-    bytes memory message = encodeRelay(relay);
-    bytes32 hash = keccak256(message);
+  function lock(RelayLib.Relay memory relay) public {
+    bytes32 hash = RelayLib.hashRelay(relay);
     require(!_confirmed[hash], "Bridge: relay confirmed");
     _requested = getCurrentTime();
+    bytes memory message = abi.encode(relay);
     _requestOraclePrice(_requested, message);
-    emit Lock(hash, message);
+    emit Lock(hash, relay);
   }
 
-  // This is called in target chain
-  function confirm(Relay memory relay) public {
-    bytes memory message = encodeRelay(relay);
-    bytes32 hash = keccak256(message);
+  function confirm(RelayLib.Relay memory relay) public {
+    bytes32 hash = RelayLib.hashRelay(relay);
     require(!_confirmed[hash], "Bridge: relay confirmed");
     _confirmed[hash] = true;
+    bytes memory message = encodeRelay(relay);
     _getOraclePrice(_requested, message);
     _requested = getCurrentTime();
     _requestOraclePrice(_requested, message);
-    emit Confirm(hash, message);
+    emit Confirm(hash, relay);
   }
 
-  // This is called in target chain
-  function withdraw(Relay memory relay) public {
-    bytes memory message = encodeRelay(relay);
-    bytes32 hash = keccak256(message);
+  function borrow(RelayLib.Relay memory relay, uint256 period) public {
+    bytes32 hash = RelayLib.hashRelay(relay);
     require(_confirmed[hash], "Bridge: relay is not confirmed");
+    bytes memory message = encodeRelay(relay);
     _getOraclePrice(_requested, message);
-    _wrappedERC721.mint(relay.to, uint256(hash), relay.tokenURI);
-    emit Withdraw(hash, message);
+    _wrappedERC721.mint(relay.to, uint256(hash), "");
+    uint256 totalAmount = relay.price * period;
+    IERC20(relay.currencyContractAddress).transferFrom(relay.to, relay.from, totalAmount);
+    emit Borrow(hash, relay);
   }
 
-  function encodeRelay(Relay memory relay) public pure returns (bytes memory) {
+  function encodeRelay(RelayLib.Relay memory relay) public pure returns (bytes memory) {
     return abi.encode(relay);
   }
 
