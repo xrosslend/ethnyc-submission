@@ -11,7 +11,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["hardhat.config"],
+      files: ["hardhat.config.js"],
       globals: { task: true },
     },
   ],
