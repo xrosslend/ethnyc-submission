@@ -6,13 +6,11 @@ import {
   FormLabel,
   Input,
   VStack,
-  Checkbox,
-  Stack,
   Text,
   UnorderedList,
   ListItem,
 } from "@chakra-ui/react";
-import { Card } from "./Card";
+import { Card } from "./Card.js";
 
 export const Lend = ({ card }) => {
   return (

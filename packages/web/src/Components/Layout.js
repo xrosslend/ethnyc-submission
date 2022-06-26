@@ -1,7 +1,7 @@
 import { Box, Container, Flex } from "@chakra-ui/react";
 
-import { Footer } from "./Footer";
-import { Header } from "./Header";
+import { Footer } from "./Footer.js";
+import { Header } from "./Header.js";
 
 export const Layout = ({ children, isLanding }) => {
   return (
