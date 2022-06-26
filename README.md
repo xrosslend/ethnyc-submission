@@ -1,21 +1,20 @@
 # XrossLend ETH NYC Submission
 
-
-
-🍃 We have deployed to Radicle ! 
+🍃 We have deployed to Radicle !
 
 The project is available at:
 
 https://app.radicle.network/seeds/willow.radicle.garden/rad:git:hnrkrdo4aiufu5kiski6bjhb387dtgzshzyso
 
-------------------------------------------------------------------------------------------------------------------------------------------------
-   https://app.radicle.network/seeds/willow.radicle.garden/rad:git:hnrkrdo4aiufu5kiski6bjhb387dtgzshzyso/remotes/hybu4moksausksp8m1ztpkbheuikh7zu3c6thn3pzwpg5eu67cog9o
-   
-------------------------------------------------------------------------------------------------------------------------------------------------
- 
+---
+
+https://app.radicle.network/seeds/willow.radicle.garden/rad:git:hnrkrdo4aiufu5kiski6bjhb387dtgzshzyso/remotes/hybu4moksausksp8m1ztpkbheuikh7zu3c6thn3pzwpg5eu67cog9o
+
+---
+
 https://willow.radicle.garden/hnrkrdo4aiufu5kiski6bjhb387dtgzshzyso.git
 
-------------------------------------------------------------------------------------------------------------------------------------------------
+---
 
 🍃 We have published our Project to Valist ! 🍃🍃 STORED ON IPFS 🍃🍃
 
@@ -23,11 +22,14 @@ https://willow.radicle.garden/hnrkrdo4aiufu5kiski6bjhb387dtgzshzyso.git
 
 Transaction : https://polygonscan.com/tx/0xa5102403c4237306e910c9e813a5e3ed3a41929ec5329fb4bdefcbbe95f3eddc
 
+🍃 We have deployed to Skynet ! 🍃
 
-🍃 We have deployed to Skynet ! 🍃 
+https://vg48u9v63r5vlooqd0csmqrbd5eoc2vuvpf12ff6ejtd47gcpb751i8.skynetfree.net/
 
-https://vg48u9v63r5vlooqd0csmqrbd5eoc2vuvpf12ff6ejtd47gcpb751i8.skynetfree.net/ 
+🍃 We have deployed cross-chain bridge smart contract to Optimism ! 🍃
 
+- Source: https://optimistic.etherscan.io/address/0xf00C5ff56105e78D32606624bdb9A1fCe047406A#code
+- Target: https://optimistic.etherscan.io/address/0xF02eb01aFF74e76991f79f3f13aBF0486d1Da803#code
 
 ## Development
 
