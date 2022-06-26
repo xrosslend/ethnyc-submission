@@ -1,4 +1,4 @@
-# NFT NYC Submission
+# XrossLend ETH NYC Submission
 
 ## Development
 
