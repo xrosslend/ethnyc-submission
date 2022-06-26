@@ -3,13 +3,10 @@ import { Text } from "@chakra-ui/react";
 import { Borrow } from "../components/Borrow";
 import { Layout } from "../components/Layout";
 
-export const BorrowPage = () => {
-  const card = {
-    collection: "collection",
-    name: "name",
-    image: "https://asia.olympus-imaging.com/content/000107506.jpg",
-  };
+import { listedCards } from "../lib/fixtures";
 
+export const BorrowPage = () => {
+  const card = listedCards[0];
   return (
     <Layout>
       <Text mb="6" fontSize={"xl"} fontWeight="bold" color="gray.700">

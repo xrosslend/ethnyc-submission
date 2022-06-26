@@ -3,12 +3,10 @@ import { Text } from "@chakra-ui/react";
 import { Lend } from "../components/Lend";
 import { Layout } from "../components/Layout";
 
+import { myCards } from "../lib/fixtures";
+
 export const LendPage = () => {
-  const card = {
-    collection: "collection",
-    name: "name",
-    image: "https://asia.olympus-imaging.com/content/000107506.jpg",
-  };
+  const card = myCards[0];
 
   return (
     <Layout>

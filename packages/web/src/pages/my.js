@@ -5,15 +5,11 @@ import { Layout } from "../components/Layout";
 import { Cards } from "../components/Cards";
 
 import { accountState } from "../atoms/account";
+import { myCards } from "../lib/fixtures";
 
 export const MyPage = () => {
   const [account] = useRecoilState(accountState);
-
-  const cards = [
-    { collection: "collection", name: "name", image: "https://asia.olympus-imaging.com/content/000107506.jpg" },
-    { collection: "collection", name: "name", image: "https://asia.olympus-imaging.com/content/000107506.jpg" },
-    { collection: "collection", name: "name", image: "https://asia.olympus-imaging.com/content/000107506.jpg" },
-  ];
+  const cards = myCards;
 
   React.useEffect(() => {
     if (!account) {
