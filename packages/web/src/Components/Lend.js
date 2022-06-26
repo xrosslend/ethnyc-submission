@@ -29,6 +29,8 @@ export const Lend = ({ card }) => {
               <ListItem fontSize="sm">Boba</ListItem>
               <ListItem fontSize="sm">Polygon</ListItem>
               <ListItem fontSize="sm">Gnosis Chain</ListItem>
+              <ListItem fontSize="sm">Cronos</ListItem>
+              <ListItem fontSize="sm">SKALE</ListItem>
             </UnorderedList>
           </FormControl>
           <FormControl>

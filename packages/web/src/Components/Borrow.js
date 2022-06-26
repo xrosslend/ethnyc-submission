@@ -30,6 +30,12 @@ export const Borrow = ({ card }) => {
               <Checkbox defaultChecked size="sm">
                 Gnosis Chain
               </Checkbox>
+              <Checkbox defaultChecked size="sm">
+                Cronos
+              </Checkbox>
+              <Checkbox defaultChecked size="sm">
+                SKALE
+              </Checkbox>
             </Stack>
           </FormControl>
         </VStack>
