@@ -1,0 +1,13 @@
+{
+  "rinkeby": {
+    "name": "Rinkeby",
+    "chainId": 4,
+    "contracts": {
+      "usdc": "0xeb8f08a975ab53e34d8a0330e0d34de942c95926",
+      "finder": "0xbb6206fb01fAad31e8aaFc3AD303cEA89D8c8157",
+      "target": "0xD85543f39A24532a51Ba89bCA382a0FD2FfA95db",
+      "source": "0xCDC81A589f82b224A8AD306C95A5DD6871799B8F"
+    },
+    "rpc": "https://rinkeby.infura.io/v3/95f65ab099894076814e8526f52c9149"
+  }
+}

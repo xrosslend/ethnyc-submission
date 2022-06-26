@@ -23,9 +23,9 @@ import "./WrappedERC721.sol";
 import "./RelayLib.sol";
 
 contract Target is Testable {
-  event Lock(bytes32 indexed hash, RelayLib.Relay reray);
-  event Confirm(bytes32 indexed hash, RelayLib.Relay reray);
-  event Borrow(bytes32 indexed hash, RelayLib.Relay reray);
+  event Lock(bytes32 indexed hash, RelayLib.Relay relay);
+  event Confirm(bytes32 indexed hash, RelayLib.Relay relay);
+  event Borrow(bytes32 indexed hash, RelayLib.Relay relay);
 
   mapping(bytes32 => bool) private _confirmed;
 
