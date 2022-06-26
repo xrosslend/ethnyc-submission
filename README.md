@@ -1,5 +1,7 @@
 # XrossLend ETH NYC Submission
 
+<em> Why are we using cross-bridging ? <em> 
+
 
 🍃 We have deployed to Radicle ! 
 
