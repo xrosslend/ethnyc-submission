@@ -1,6 +1,4 @@
-- name: Valist Action
-  uses: valist-io/valist-github-action@v2.2.0
-
+on: push
 name: Valist Publish
 jobs:
   publish:
@@ -9,7 +7,7 @@ jobs:
       - uses: valist-io/valist-github-action@v2.2.0
         with:
           private-key: ${{ secrets.PRIVATE_KEY }}
-          account: acme-co
-          project: example
-          release: 0.0.1
+          account: newway
+          project: xcrosslend
+          release: 1
           files: '**'
