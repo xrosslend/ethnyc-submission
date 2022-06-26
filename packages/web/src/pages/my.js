@@ -1,10 +1,10 @@
 import React from "react";
 import { Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { Layout } from "../components/Layout";
-import { Cards } from "../components/Cards";
+import { Layout } from "../components/Layout.js";
+import { Cards } from "../components/Cards.js";
 
-import { accountState } from "../atoms/account";
+import { accountState } from "../atoms/account.js";
 
 export const MyPage = () => {
   const [account, setAccount] = useRecoilState(accountState);

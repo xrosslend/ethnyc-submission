@@ -1,6 +1,6 @@
 import { Text } from "@chakra-ui/react";
-import { Cards } from "../components/Cards";
-import { Layout } from "../components/Layout";
+import { Cards } from "../components/Cards.js";
+import { Layout } from "../components/Layout.js";
 
 export const IndexPage = () => {
   const cards = [

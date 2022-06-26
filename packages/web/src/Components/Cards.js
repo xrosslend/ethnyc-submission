@@ -1,5 +1,5 @@
 import { Grid, GridItem } from "@chakra-ui/react";
-import { Card } from "./Card";
+import { Card } from "./Card.js";
 
 export const Cards = ({ cards, to }) => {
   return (
