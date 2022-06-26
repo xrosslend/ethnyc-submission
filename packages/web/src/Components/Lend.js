@@ -14,12 +14,12 @@ export const Lend = ({ card }) => {
         <VStack spacing={3} mb="12">
           <FormControl>
             <FormLabel htmlFor="text">Price Per Day</FormLabel>
-            <Input id="text" type="price" placeholder="USDC" />
+            <Input id="text" type="price" placeholder="weth" />
           </FormControl>
           <FormControl>
             <FormLabel htmlFor="currency">Currency</FormLabel>
             <Select id="currency">
-              <option value="option1">USDC</option>
+              <option value="option1">weth</option>
               <option value="option2" disabled>
                 WETH
               </option>

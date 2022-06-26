@@ -22,6 +22,7 @@ import { accountState } from "../atoms/account";
 import { Card } from "./Card";
 
 import TargetABI from "../../../contracts/artifacts/contracts/Target.sol/Target.json";
+import OptimisticOracleV2 from "../../../contracts/artifacts/@uma/core/contracts/oracle/implementation/OptimisticOracleV2.sol";
 
 import networks from "../../../contracts/networks.json";
 
@@ -74,7 +75,7 @@ export const Borrow = ({ card }) => {
 
       const target = new web3.eth.Contract(TargetABI.abi, networks[network].contracts.target);
       const relay = {
-        currencyContractAddress: networks[network].contracts.usdc,
+        currencyContractAddress: networks[network].contracts.weth,
         nftContractAddress: zeroAddress,
         from: zeroAddress,
         tokenId: 0,
@@ -82,6 +83,16 @@ export const Borrow = ({ card }) => {
         expiration: 9999999999,
         tokenURI: "",
       };
+
+      // await optimisticOracle.proposePriceFor(
+      //   proposer.address,
+      //   target.address,
+      //   identifier,
+      //   requestLockTimestamp,
+      //   message,
+      //   0
+      // );
+
       await target.methods.lock(relay).send({ from: account });
     } catch (err) {
       console.error(err);

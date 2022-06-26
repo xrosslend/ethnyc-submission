@@ -107,6 +107,6 @@ contract Target is Testable {
   }
 
   function _getOptimisticOracle() internal view returns (OptimisticOracleV2Interface) {
-    return OptimisticOracleV2Interface(_finder.getImplementationAddress("OptimisticOracleV2"));
+    return OptimisticOracleV2Interface(_finder.getImplementationAddress("OptimisticOracle"));
   }
 }

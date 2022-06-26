@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("Source Unit Test", function () {
-  let expandedERC20;
+  let weth;
   let mockNFT;
   let source;
   let deployer;
@@ -10,8 +10,8 @@ describe("Source Unit Test", function () {
   beforeEach(async function () {
     [deployer] = await ethers.getSigners();
     const ExpandedERC20 = await ethers.getContractFactory("ExpandedERC20");
-    expandedERC20 = await ExpandedERC20.deploy("USD Coin", "USDC", 6);
-    await expandedERC20.deployed();
+    weth = await ExpandedERC20.deploy("WETH", "weth", 6);
+    await weth.deployed();
 
     const MockNFT = await ethers.getContractFactory("MockNFT");
     mockNFT = await MockNFT.deploy();
@@ -27,7 +27,7 @@ describe("Source Unit Test", function () {
     await mockNFT.mint(deployer.address);
     await mockNFT.setApprovalForAll(source.address, true);
     const relay = {
-      currencyContractAddress: expandedERC20.address,
+      currencyContractAddress: weth.address,
       nftContractAddress: mockNFT.address,
       from: deployer.address,
       tokenId,

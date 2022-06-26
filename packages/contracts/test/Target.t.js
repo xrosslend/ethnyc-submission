@@ -5,7 +5,7 @@ const { ethers } = require("hardhat");
 describe("Target Unit Test", function () {
   let timer;
   let optimisticOracle;
-  let expandedERC20;
+  let weth;
   let mockNFT;
   let target;
   let deployer, proposer;
@@ -35,8 +35,8 @@ describe("Target Unit Test", function () {
     await identifierWhitelist.deployed();
 
     const ExpandedERC20 = await ethers.getContractFactory("ExpandedERC20");
-    expandedERC20 = await ExpandedERC20.deploy("USD Coin", "USDC", 6);
-    await expandedERC20.deployed();
+    weth = await ExpandedERC20.deploy("WETH", "weth", 6);
+    await weth.deployed();
 
     const Store = await ethers.getContractFactory("Store");
 
@@ -54,27 +54,27 @@ describe("Target Unit Test", function () {
     await finder.changeImplementationAddress(utf8ToHex(interfaceName.CollateralWhitelist), collateralWhitelist.address);
     await finder.changeImplementationAddress(utf8ToHex(interfaceName.IdentifierWhitelist), identifierWhitelist.address);
     await finder.changeImplementationAddress(utf8ToHex(interfaceName.Store), store.address);
-    await finder.changeImplementationAddress(utf8ToHex("OptimisticOracleV2"), optimisticOracle.address); // TODO interfaceName.OptimisticOracleV2
+    await finder.changeImplementationAddress(utf8ToHex(interfaceName.OptimisticOracle), optimisticOracle.address); // TODO interfaceName.OptimisticOracleV2
     await finder.changeImplementationAddress(utf8ToHex(interfaceName.Oracle), mockOracle.address);
 
     await identifierWhitelist.addSupportedIdentifier(identifier);
 
-    await expandedERC20.addMember(TokenRolesEnum.MINTER, deployer.address);
-    await collateralWhitelist.addToWhitelist(expandedERC20.address);
+    await weth.addMember(TokenRolesEnum.MINTER, deployer.address);
+    await collateralWhitelist.addToWhitelist(weth.address);
 
     const MockNFT = await ethers.getContractFactory("MockNFT");
     mockNFT = await MockNFT.deploy();
     await mockNFT.deployed();
 
     const Target = await ethers.getContractFactory("Target");
-    target = await Target.deploy(expandedERC20.address, finder.address, timer.address);
+    target = await Target.deploy(weth.address, finder.address, timer.address);
     await target.deployed();
   });
 
   it("lock", async function () {
     const tokenId = 0;
     const relay = {
-      currencyContractAddress: expandedERC20.address,
+      currencyContractAddress: weth.address,
       nftContractAddress: mockNFT.address,
       from: deployer.address,
       tokenId,
@@ -88,7 +88,7 @@ describe("Target Unit Test", function () {
   it("confirm", async function () {
     const tokenId = 0;
     const relay = {
-      currencyContractAddress: expandedERC20.address,
+      currencyContractAddress: weth.address,
       nftContractAddress: mockNFT.address,
       from: deployer.address,
       tokenId,
@@ -114,7 +114,7 @@ describe("Target Unit Test", function () {
   it("borrow", async function () {
     const tokenId = 0;
     const relay = {
-      currencyContractAddress: expandedERC20.address,
+      currencyContractAddress: weth.address,
       nftContractAddress: mockNFT.address,
       from: deployer.address,
       tokenId,
