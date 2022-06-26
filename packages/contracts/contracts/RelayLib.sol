@@ -8,7 +8,6 @@ library RelayLib {
     address currencyContractAddress;
     address nftContractAddress;
     address from;
-    address to;
     uint256 tokenId;
     uint256 price;
     uint256 expiration;

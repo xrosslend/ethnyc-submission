@@ -77,7 +77,6 @@ describe("Target Unit Test", function () {
       currencyContractAddress: expandedERC20.address,
       nftContractAddress: mockNFT.address,
       from: deployer.address,
-      to: deployer.address,
       tokenId,
       price: 0,
       expiration: 9999999999,
@@ -92,7 +91,6 @@ describe("Target Unit Test", function () {
       currencyContractAddress: expandedERC20.address,
       nftContractAddress: mockNFT.address,
       from: deployer.address,
-      to: deployer.address,
       tokenId,
       price: 0,
       expiration: 9999999999,
@@ -119,7 +117,6 @@ describe("Target Unit Test", function () {
       currencyContractAddress: expandedERC20.address,
       nftContractAddress: mockNFT.address,
       from: deployer.address,
-      to: deployer.address,
       tokenId,
       price: 0,
       expiration: 9999999999,
@@ -148,6 +145,9 @@ describe("Target Unit Test", function () {
       0
     );
     await timer.setCurrentTime(Number(await timer.getCurrentTime()) + proposalLiveness + 1);
-    await expect(target.borrow(relay, 1)).to.emit(target, "Borrow");
+    const ERC721 = await ethers.getContractFactory("ERC721");
+    const erc721Address = await target.erc721();
+    const erc721 = await ERC721.attach(erc721Address);
+    await expect(target.borrow(relay, 1)).to.emit(target, "Borrow").emit(erc721, "Transfer");
   });
 });

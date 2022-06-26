@@ -30,7 +30,6 @@ describe("Source Unit Test", function () {
       currencyContractAddress: expandedERC20.address,
       nftContractAddress: mockNFT.address,
       from: deployer.address,
-      to: deployer.address,
       tokenId,
       price: 0,
       expiration: 9999999999,

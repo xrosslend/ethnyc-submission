@@ -72,10 +72,16 @@ contract Target is Testable {
     require(_confirmed[hash], "Bridge: relay is not confirmed");
     bytes memory message = encodeRelay(relay);
     _getOraclePrice(_requested, message);
-    _wrappedERC721.mint(relay.to, uint256(hash), "");
     uint256 totalAmount = relay.price * period;
-    IERC20(relay.currencyContractAddress).transferFrom(relay.to, relay.from, totalAmount);
+    if (totalAmount > 0) {
+      IERC20(relay.currencyContractAddress).transferFrom(msg.sender, relay.from, totalAmount);
+    }
+    _wrappedERC721.mint(msg.sender, uint256(hash), "");
     emit Borrow(hash, relay);
+  }
+
+  function erc721() public view returns (address) {
+    return address(_wrappedERC721);
   }
 
   function encodeRelay(RelayLib.Relay memory relay) public pure returns (bytes memory) {

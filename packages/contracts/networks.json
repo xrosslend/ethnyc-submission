@@ -5,9 +5,20 @@
     "contracts": {
       "usdc": "0xeb8f08a975ab53e34d8a0330e0d34de942c95926",
       "finder": "0xbb6206fb01fAad31e8aaFc3AD303cEA89D8c8157",
-      "target": "0xD85543f39A24532a51Ba89bCA382a0FD2FfA95db",
-      "source": "0xCDC81A589f82b224A8AD306C95A5DD6871799B8F"
+      "target": "0xC58ccF269D570AA83a308E627bE545dCC0dD7325",
+      "source": "0xB3e54e3eEA1997D8bcB62f27C2e801387df7F728"
     },
-    "rpc": "https://rinkeby.infura.io/v3/95f65ab099894076814e8526f52c9149"
+    "rpc": "https://eth-rinkeby.gateway.pokt.network/v1/lb/62b811ae123e6f003985abbf"
+  },
+  "optimism": {
+    "name": "Optimism",
+    "chainId": 10,
+    "contracts": {
+      "usdc": "0x7f5c764cbc14f9669b88837ca1490cca17c31607",
+      "finder": "0x278d6b1aA37d09769E519f05FcC5923161A8536D",
+      "target": "0xF02eb01aFF74e76991f79f3f13aBF0486d1Da803",
+      "source": "0xf00C5ff56105e78D32606624bdb9A1fCe047406A"
+    },
+    "rpc": "https://optimism-mainnet.gateway.pokt.network/v1/lb/62b82985123e6f003985dbf4"
   }
 }

@@ -5,6 +5,7 @@ import Web3 from "web3";
 import { NavLink } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { accountState } from "../atoms/account";
+
 import { shorten } from "../lib/utils";
 
 export const Header = ({ isLanding }) => {

@@ -17,6 +17,12 @@ module.exports = {
       url: networks.rinkeby.rpc,
       accounts,
     },
+    optimism: {
+      finder: networks.optimism.contracts.finder,
+      chainId: networks.optimism.chainId,
+      url: networks.optimism.rpc,
+      accounts,
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
