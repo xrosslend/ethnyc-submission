@@ -22,7 +22,7 @@ import { accountState } from "../atoms/account";
 import { Card } from "./Card";
 
 import TargetABI from "../../../contracts/artifacts/contracts/Target.sol/Target.json";
-import OptimisticOracleV2 from "../../../contracts/artifacts/@uma/core/contracts/oracle/implementation/OptimisticOracleV2.sol";
+// import OptimisticOracleV2 from "../../../contracts/artifacts/@uma/core/contracts/oracle/implementation/OptimisticOracleV2.sol";
 
 import networks from "../../../contracts/networks.json";
 
