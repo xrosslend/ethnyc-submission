@@ -9,10 +9,10 @@ export const Card = ({ card, to }) => {
           <Image src={card.image} alt={card.name} draggable="false" fallback={<Skeleton />} borderTopRadius="2xl" />
         </Box>
         <Stack spacing="1" px="4" py="2">
-          <Text fontSize="xs" color="gray.700">
+          <Text fontSize="sm" color="gray.700">
             {card.collection}
           </Text>
-          <Text fontSize="sm" color="gray.700">
+          <Text fontSize="md" color="gray.700">
             {card.name}
           </Text>
         </Stack>
