@@ -13,7 +13,7 @@ export const Lend = ({ card }) => {
       <Box border="1px" borderColor="gray.200" rounded={"2xl"} p="8">
         <VStack spacing={3} mb="12">
           <FormControl>
-            <FormLabel htmlFor="text">Price Per Day</FormLabel>
+            <FormLabel htmlFor="text">Price per Day</FormLabel>
             <Input id="text" type="price" placeholder="weth" />
           </FormControl>
           <FormControl>

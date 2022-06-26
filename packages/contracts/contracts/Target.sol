@@ -23,18 +23,18 @@ import "./WrappedERC721.sol";
 import "./RelayLib.sol";
 
 contract Target is Testable {
-  event Lock(bytes32 indexed hash, RelayLib.Relay relay);
-  event Confirm(bytes32 indexed hash, RelayLib.Relay relay);
-  event Borrow(bytes32 indexed hash, RelayLib.Relay relay);
+  event Lock(bytes32 indexed hash, RelayLib.Relay relay, uint256 timestamp);
+  event Confirm(bytes32 indexed hash, RelayLib.Relay relay, uint256 timestamp);
+  event Borrow(bytes32 indexed hash, RelayLib.Relay relay, uint256 timestamps);
 
   mapping(bytes32 => bool) private _confirmed;
+  mapping(bytes32 => uint256) public requestedAt;
 
   FinderInterface private _finder;
   IERC20 private _collateralCurrency;
   WrappedERC721 private _wrappedERC721;
 
   bytes32 private _priceIdentifier = "YES_OR_NO_QUERY";
-  uint256 private _requested;
 
   constructor(
     address collateralAddress,
@@ -48,40 +48,45 @@ contract Target is Testable {
   }
 
   function lock(RelayLib.Relay memory relay) public {
-    bytes32 hash = RelayLib.hashRelay(relay);
+    bytes32 hash = hashRelay(relay);
     require(!_confirmed[hash], "Bridge: relay confirmed");
-    _requested = getCurrentTime();
+    requestedAt[hash] = getCurrentTime();
     bytes memory message = abi.encode(relay);
-    _requestOraclePrice(_requested, message);
-    emit Lock(hash, relay);
+    _requestOraclePrice(requestedAt[hash], message);
+    emit Lock(hash, relay, requestedAt[hash]);
   }
 
   function confirm(RelayLib.Relay memory relay) public {
-    bytes32 hash = RelayLib.hashRelay(relay);
+    bytes32 hash = hashRelay(relay);
     require(!_confirmed[hash], "Bridge: relay confirmed");
     _confirmed[hash] = true;
     bytes memory message = encodeRelay(relay);
-    _getOraclePrice(_requested, message);
-    _requested = getCurrentTime();
-    _requestOraclePrice(_requested, message);
-    emit Confirm(hash, relay);
+    _getOraclePrice(requestedAt[hash], message);
+    requestedAt[hash] = getCurrentTime();
+    _requestOraclePrice(requestedAt[hash], message);
+    emit Confirm(hash, relay, requestedAt[hash]);
   }
 
   function borrow(RelayLib.Relay memory relay, uint256 period) public {
-    bytes32 hash = RelayLib.hashRelay(relay);
+    bytes32 hash = hashRelay(relay);
     require(_confirmed[hash], "Bridge: relay is not confirmed");
     bytes memory message = encodeRelay(relay);
-    _getOraclePrice(_requested, message);
+    _getOraclePrice(requestedAt[hash], message);
     uint256 totalAmount = relay.price * period;
     if (totalAmount > 0) {
       IERC20(relay.currencyContractAddress).transferFrom(msg.sender, relay.from, totalAmount);
     }
     _wrappedERC721.mint(msg.sender, uint256(hash), "");
-    emit Borrow(hash, relay);
+    requestedAt[hash] = getCurrentTime();
+    emit Borrow(hash, relay, requestedAt[hash]);
   }
 
   function erc721() public view returns (address) {
     return address(_wrappedERC721);
+  }
+
+  function hashRelay(RelayLib.Relay memory relay) public pure returns (bytes32) {
+    return RelayLib.hashRelay(relay);
   }
 
   function encodeRelay(RelayLib.Relay memory relay) public pure returns (bytes memory) {

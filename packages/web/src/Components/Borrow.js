@@ -17,14 +17,18 @@ import { useRecoilState } from "recoil";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import Web3Modal from "web3modal";
 import Web3 from "web3";
+import { ethers } from "ethers";
 
 import { accountState } from "../atoms/account";
 import { Card } from "./Card";
 
 import TargetABI from "../../../contracts/artifacts/contracts/Target.sol/Target.json";
-// import OptimisticOracleV2 from "../../../contracts/artifacts/@uma/core/contracts/oracle/implementation/OptimisticOracleV2.sol";
+import OptimisticOracleV2 from "../../../contracts/artifacts/@uma/core/contracts/oracle/implementation/OptimisticOracleV2.sol/OptimisticOracleV2.json";
 
 import networks from "../../../contracts/networks.json";
+
+const utf8ToHex = (input) => ethers.utils.formatBytes32String(input);
+const identifier = utf8ToHex("YES_OR_NO_QUERY");
 
 export const Borrow = ({ card }) => {
   const [account, setAccount] = useRecoilState(accountState);
@@ -73,7 +77,9 @@ export const Borrow = ({ card }) => {
       const web3 = new Web3(provider);
       const [account] = await web3.eth.getAccounts();
 
-      const target = new web3.eth.Contract(TargetABI.abi, networks[network].contracts.target);
+      const targetAddress = networks[network].contracts.target;
+      const optimisticOracleAddress = networks[network].contracts.optimisticOracle;
+      const target = new web3.eth.Contract(TargetABI.abi, targetAddress);
       const relay = {
         currencyContractAddress: networks[network].contracts.weth,
         nftContractAddress: zeroAddress,
@@ -83,17 +89,18 @@ export const Borrow = ({ card }) => {
         expiration: 9999999999,
         tokenURI: "",
       };
-
-      // await optimisticOracle.proposePriceFor(
-      //   proposer.address,
-      //   target.address,
-      //   identifier,
-      //   requestLockTimestamp,
-      //   message,
-      //   0
-      // );
-
+      const hash = await target.methods.hashRelay(relay).call();
+      console.log(hash);
+      const message = await target.methods.encodeRelay(relay).call();
+      console.log(message);
       await target.methods.lock(relay).send({ from: account });
+      const requestLockTimestamp = await target.methods.requestedAt(hash).call();
+      const optimisticOracle = new web3.eth.Contract(OptimisticOracleV2.abi, optimisticOracleAddress);
+      console.log(account, targetAddress, identifier, requestLockTimestamp, message, 0);
+      await optimisticOracle.methods
+        .proposePriceFor(account, targetAddress, identifier, requestLockTimestamp, message, 0)
+        .send({ from: account });
+      await target.methods.confirm(relay).send({ from: account });
     } catch (err) {
       console.error(err);
     }
@@ -105,7 +112,7 @@ export const Borrow = ({ card }) => {
       <Box border="1px" borderColor="gray.200" rounded={"2xl"} p="8">
         <VStack spacing={3} mb="12">
           <FormControl>
-            <FormLabel htmlFor="price">Price Per Day</FormLabel>
+            <FormLabel htmlFor="price">Price per Day</FormLabel>
             <Text id="price">0 ETH</Text>
           </FormControl>
           <FormControl>

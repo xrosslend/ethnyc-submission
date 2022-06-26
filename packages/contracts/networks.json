@@ -6,8 +6,8 @@
       "weth": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
       "finder": "0xbb6206fb01fAad31e8aaFc3AD303cEA89D8c8157",
       "optimisticOracle": "0x3746badD4d6002666dacd5d7bEE19f60019A8433",
-      "target": "0x80386959C618AD1edB4904bA4bb1a091cCE52D8d",
-      "source": "0xf4044817aEC22a7D884D514ADb0cb2468360b8a1"
+      "target": "0x5DeA0F77f89E72B8D812Efa19002F00D7EACF234",
+      "source": "0xBA908828BD8f3D871BC709cB6BeD8DbE555795F4"
     },
     "rpc": "https://eth-rinkeby.gateway.pokt.network/v1/lb/62b811ae123e6f003985abbf"
   },
