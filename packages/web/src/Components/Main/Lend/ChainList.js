@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ConfirmLending = () => {
+const ChainList = () => {
   return (
     <div>
         
@@ -8,4 +8,4 @@ const ConfirmLending = () => {
   )
 }
 
-export default ConfirmLending
+export default ChainList
