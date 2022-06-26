@@ -1,0 +1,2 @@
+- name: Valist Action
+  uses: valist-io/valist-github-action@v2.2.0
