@@ -24,6 +24,11 @@ https://willow.radicle.garden/hnrkrdo4aiufu5kiski6bjhb387dtgzshzyso.git
 Transaction : https://polygonscan.com/tx/0xa5102403c4237306e910c9e813a5e3ed3a41929ec5329fb4bdefcbbe95f3eddc
 
 
+🍃 We have deployed to Skynet ! 🍃 
+
+https://vg48u9v63r5vlooqd0csmqrbd5eoc2vuvpf12ff6ejtd47gcpb751i8.skynetfree.net/ 
+
+
 ## Development
 
 ```
